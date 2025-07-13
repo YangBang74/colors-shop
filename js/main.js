@@ -1,19 +1,39 @@
-const toggleMenu = () => {
-  const menu = document.querySelector('.header__menu')
-  menu.classList.toggle('active')
+let allProducts = []
+let currentSort = 'desc'
+const cart = []
+
+const headerMenu = document.querySelector('.header__menu')
+const cardElement = document.querySelector('.card')
+const filterElement = document.querySelector('.filter')
+const cardsDateList = document.querySelector('.cards__date-list')
+const cardsCardCount = document.querySelector('.cards__card-count')
+const sortBlock = document.querySelector('.cards__date-sort')
+const sortBody = document.querySelector('.sort__body')
+const sortByText = document.querySelector('#sort-by')
+const cartItemsContainer = document.querySelector('.header__card-items')
+const headerItemsNum = document.querySelector('.header__items-num')
+const mathPrice = document.getElementById('mathPrice')
+const actionsCardBtn = document.querySelector('.--actions-card')
+const clearCartBtn = document.querySelector('.header__items-del')
+const filterCheckboxes = document.querySelectorAll('.filter-toggle__checkbox')
+
+const toggleClass = (element, className = 'active') => {
+  if (element) {
+    element.classList.toggle(className)
+  }
 }
 
-const toggleCard = () => {
-  const cardMenu = document.querySelector('.card')
-  cardMenu.classList.toggle('active')
+const setBodyOverflow = (hidden) => {
+  document.body.style.overflow = hidden ? 'hidden' : 'auto'
 }
+
+const toggleMenu = () => toggleClass(headerMenu)
+const toggleCard = () => toggleClass(cardElement)
+const toggleFilter = () => toggleClass(filterElement)
+
 const swiper = new Swiper('.mySwiper', {
-  // 👇 Добавьте эти две строки
   effect: 'fade',
-  fadeEffect: {
-    crossFade: true,
-  },
-
+  fadeEffect: { crossFade: true },
   loop: true,
   navigation: {
     nextEl: '.swiper-button-next',
@@ -22,201 +42,285 @@ const swiper = new Swiper('.mySwiper', {
   pagination: {
     el: '.swiper-pagination',
     clickable: true,
-    // type: 'bullets',
   },
 })
 
-const toggleFilter = () => {
-  const filter = document.querySelector('.filter');
-  filter.classList.toggle('active')
+if (sortBlock && sortBody) {
+  sortBlock.addEventListener('click', (e) => {
+    e.stopPropagation()
+    sortBlock.classList.toggle('--active')
+    sortBody.classList.toggle('open')
+  })
 }
 
-const checkboxes = document.querySelectorAll('.filter-toggle__checkbox')
-
-checkboxes.forEach((checkbox) => {
-  checkbox.addEventListener('change', () => {
-    const filters = Array.from(checkboxes)
-      .filter((c) => c.checked)
-      .map((c) => c.dataset.filter)
-
-    console.log('Активные фильтры:', filters)
-    // Можно вызывать: filterProducts(filters);
-  })
+document.addEventListener('click', (e) => {
+  if (sortBlock && sortBody && !sortBlock.contains(e.target)) {
+    sortBlock.classList.remove('--active')
+    sortBody.classList.remove('open')
+    setBodyOverflow(false)
+  }
 })
 
-let allProducts = []
-let currentSort = 'desc' // начальная сортировка — сначала дорогие
+if (sortBody) {
+  sortBody.addEventListener('click', (e) => {
+    const clickedButton = e.target.closest('.sort__body-btn')
+    if (clickedButton) {
+      document
+        .querySelectorAll('.sort__body-btn')
+        .forEach((btn) => btn.classList.remove('--active'))
+      clickedButton.classList.add('--active')
+      const sortText = clickedButton.textContent.trim()
+      if (sortByText) {
+        sortByText.textContent = sortText
+      }
+      switch (sortText) {
+        case 'Сначала дорогие':
+          currentSort = 'desc'
+          break
+        case 'Сначала недорогие':
+          currentSort = 'asc'
+          break
+        case 'Сначала популярные':
+          currentSort = 'popular'
+          break
+        case 'Сначала новые':
+          currentSort = 'new'
+          break
+        default:
+          currentSort = 'desc'
+      }
+      applyFiltersAndSort()
+      sortBlock.classList.remove('--active')
+      sortBody.classList.remove('open')
+      setBodyOverflow(false)
+    }
+  })
+}
 
 async function fetchData() {
-  const resp = await fetch('https://679270a56f8379b3.mokky.dev/colors')
-  const data = await resp.json()
-  if (!resp.ok) throw new Error(data.message || 'Something went wrong')
-
-  // Добавим каждому товару уникальный ID (например, по индексу)
-  return data.map((item, index) => ({ ...item, id: index + 1 }))
+  try {
+    const resp = await fetch('https://679270a56f8379b3.mokky.dev/colors')
+    if (!resp.ok) {
+      const errorData = await resp.json()
+      throw new Error(errorData.message || `HTTP error! status: ${resp.status}`)
+    }
+    const data = await resp.json()
+    return data.map((item, index) => ({
+      ...item,
+      id: item.id || index + 1,
+      price: Number(item.price) || 0,
+      count: Number(item.count) || 0,
+      rating: Number(item.rating) || 0,
+      conact: Boolean(item.conact),
+      ex: Boolean(item.ex),
+      onsale: Boolean(item.onsale),
+      new: Boolean(item.new),
+    }))
+  } catch (error) {
+    console.error('Failed to fetch products:', error)
+    if (cardsDateList) {
+      cardsDateList.innerHTML =
+        '<p class="empty-message">Не удалось загрузить товары. Пожалуйста, попробуйте позже.</p>'
+    }
+    if (cardsCardCount) {
+      cardsCardCount.textContent = '0 товаров'
+    }
+    return []
+  }
 }
 
 function renderCards(data) {
-  const container = document.querySelector('.cards__date .cards__date-list')
-  const counter = document.querySelector('.cards__date-head span')
-  container.innerHTML = ''
-
-  counter.textContent = `${data.length} товар${
-    data.length === 1 ? '' : data.length < 5 ? 'а' : 'ов'
-  }`
-
-  data.forEach((item) => {
-    const card = `
-  <div class="card__item">
-    <img src="${item.image}" alt="${item.title}" class="card__image" />
-    <h3 class="card__title">${item.title}</h3>
-    <div class="card__bottom">
-      <p class="card__price">${item.price.toLocaleString()} ₽</p>
-      <button class="card__btn"${
-        item.count === 0
-          ? ' disabled'
-          : ` onclick='addToCart(${JSON.stringify(item).replace(/'/g, "\\'")})'`
-      }>
-        ${
-          item.count === 0
-            ? 'Не в наличии'
-            : `<svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 4.16663V15.8333" stroke="#1F2020" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M4.16699 10H15.8337" stroke="#1F2020" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>`
-        }
-      </button>
-    </div>
-  </div>
-`
-
-    container.innerHTML += card
-  })
+  if (!cardsDateList || !cardsCardCount) return
+  cardsDateList.innerHTML = ''
+  if (data.length === 0) {
+    cardsDateList.innerHTML = '<p class="empty-message">Товары не найдены.</p>'
+    cardsCardCount.textContent = '0 товаров'
+    return
+  }
+  const lastDigit = data.length % 10
+  const lastTwoDigits = data.length % 100
+  let nounEnding
+  if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+    nounEnding = 'ов'
+  } else if (lastDigit === 1) {
+    nounEnding = ''
+  } else if (lastDigit >= 2 && lastDigit <= 4) {
+    nounEnding = 'а'
+  } else {
+    nounEnding = 'ов'
+  }
+  cardsCardCount.textContent = `${data.length} товар${nounEnding}`
+  const html = data
+    .map((item) => {
+      const isUnavailable = item.count === 0
+      const buttonContent = isUnavailable
+        ? 'Не в наличии'
+        : `<svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+         xmlns="http://www.w3.org/2000/svg">
+         <path d="M10 4.16663V15.8333" stroke="#1F2020" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round"/>
+         <path d="M4.16699 10H15.8337" stroke="#1F2020" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round"/>
+       </svg>`
+      return `
+        <div class="card__item">
+            <img src="${item.image}" alt="${item.title}" class="card__image" loading="lazy" />
+            <h3 class="card__title">${item.title}</h3>
+            <div class="card__bottom">
+                <p class="card__price">${item.price.toLocaleString()} ₽</p>
+                <button class="card__btn"
+                    ${isUnavailable ? 'disabled' : `onclick='addToCartById(${item.id})'`}>
+                    ${buttonContent}
+                </button>
+            </div>
+        </div>
+    `
+    })
+    .join('')
+  cardsDateList.innerHTML = html
 }
 
 function applyFiltersAndSort() {
-  const checkboxes = document.querySelectorAll('.filter-toggle__checkbox:checked')
-  const filters = Array.from(checkboxes).map((cb) => cb.dataset.filter)
+  const activeFilters = Array.from(filterCheckboxes)
+    .filter((cb) => cb.checked)
+    .map((cb) => cb.dataset.filter)
 
-  let filtered = [...allProducts]
+  let filteredProducts = [...allProducts]
 
-  filters.forEach((filter) => {
-    if (filter === 'available') {
-      filtered = filtered.filter((p) => p.count > 0)
-    } else if (filter === 'contract') {
-      filtered = filtered.filter((p) => p.conact)
-    } else if (filter === 'exclusive') {
-      filtered = filtered.filter((p) => p.ex)
-    } else if (filter === 'sale') {
-      filtered = filtered.filter((p) => p.onsale)
-    } else if (filter === 'new') {
-      // Если появится new флаг — отфильтруем по нему
-      filtered = filtered.filter((p) => p.new === true)
+  activeFilters.forEach((filter) => {
+    switch (filter) {
+      case 'available':
+        filteredProducts = filteredProducts.filter((p) => p.count > 0)
+        break
+      case 'contract':
+        filteredProducts = filteredProducts.filter((p) => p.conact === true)
+        break
+      case 'exclusive':
+        filteredProducts = filteredProducts.filter((p) => p.ex === true)
+        break
+      case 'sale':
+        filteredProducts = filteredProducts.filter((p) => p.onsale === true)
+        break
+      case 'new':
+        filteredProducts = filteredProducts.filter((p) => p.new === true)
+        break
     }
   })
 
-  // сортировка по цене
-  filtered.sort((a, b) => {
-    return currentSort === 'desc' ? b.price - a.price : a.price - b.price
-  })
+  if (currentSort === 'desc' || currentSort === 'asc') {
+    filteredProducts.sort((a, b) =>
+      currentSort === 'desc' ? b.price - a.price : a.price - b.price
+    )
+  } else if (currentSort === 'popular') {
+    filteredProducts.sort((a, b) => (b.rating || 0) - (a.rating || 0))
+  }
 
-  renderCards(filtered)
+  renderCards(filteredProducts)
 }
-
-window.onload = async () => {
-  allProducts = await fetchData()
-  renderCards(allProducts)
-
-  // фильтры
-  document.querySelectorAll('.filter-toggle__checkbox').forEach((cb) => {
-    cb.addEventListener('change', applyFiltersAndSort)
-  })
-
-  // сортировка
-  const sortBtn = document.querySelector('.cards__date-sort')
-  const sortLabel = document.querySelector('#sort-by')
-
-  sortBtn.addEventListener('click', () => {
-    currentSort = currentSort === 'desc' ? 'asc' : 'desc'
-    sortLabel.textContent = currentSort === 'desc' ? 'Сначала дорогие' : 'Сначала дешевые'
-    applyFiltersAndSort()
-  })
-}
-
-const cart = []
 
 function updateCartUI() {
-  const itemsContainer = document.querySelector('.header__card-items')
-  const countSpan = document.querySelector('.header__items-num')
-  const priceTotal = document.getElementById('mathPrice')
-  const cartBtn = document.querySelector('.--actions-card')
+  if (!cartItemsContainer || !headerItemsNum || !mathPrice || !actionsCardBtn) return
 
-  const heads = itemsContainer.querySelector('.header__items-head')
-  itemsContainer.innerHTML = ''
-  itemsContainer.appendChild(heads)
+  const cartHeader = cartItemsContainer.querySelector('.header__items-head')
+  cartItemsContainer.innerHTML = ''
+
+  if (cartHeader) {
+    cartItemsContainer.appendChild(cartHeader)
+  }
 
   let total = 0
   let totalCount = 0
 
-  cart.forEach((item, index) => {
-    const { product, quantity } = item
-    const subtotal = product.price * quantity
-    total += subtotal
-    totalCount += quantity
-
-    const cartItem = document.createElement('div')
-    cartItem.className = 'header__item'
-    cartItem.innerHTML = `
-      <img src="${product.image}" alt="${product.title}" class="header__item-img" />
-      <div class="header__item-info">
-          <div>
-            <h4 class="header__item-title">${product.title}</h4>
-            <p class="header__item-price">${subtotal.toLocaleString()} ₽</p>
-          </div>
-          <div class="header__item-qty">
-              <button onclick="decreaseQty(${index})">
-                <svg width="12" height="2" viewBox="0 0 12 2" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M1.3335 1H10.6668" stroke="black" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </button>
-              <span>${quantity}</span>
-              <button onclick="increaseQty(${index})">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M6 1.33325V10.6666" stroke="black" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M1.3335 6H10.6668" stroke="black" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>
-          </div>
-        <button class="header__item-remove" onclick="removeFromCart(${index})">✕</button>
-      </div>
-      
-    `
-    itemsContainer.appendChild(cartItem)
-  })
-
-  countSpan.textContent = totalCount
-  cartBtn.textContent = totalCount
-  priceTotal.textContent = total.toLocaleString()
-}
-
-function addToCart(product) {
-  const existing = cart.find((item) => item.product.id === product.id)
-
-  if (existing) {
-    existing.quantity++
+  if (cart.length === 0) {
+    const emptyMessage = document.createElement('p')
+    emptyMessage.className = 'empty-message'
+    emptyMessage.textContent = 'Корзина пуста.'
+    cartItemsContainer.appendChild(emptyMessage)
   } else {
-    cart.push({ product, quantity: 1 })
+    cart.forEach((item, index) => {
+      const { product, quantity } = item
+      const subtotal = product.price * quantity
+      total += subtotal
+      totalCount += quantity
+
+      const cartItem = document.createElement('div')
+      cartItem.className = 'header__item'
+      cartItem.innerHTML = `
+        <img src="${product.image}" alt="${product.title}" class="header__item-img" />
+        <div class="header__item-info">
+            <div>
+                <h4 class="header__item-title">${product.title}</h4>
+                <p class="header__item-price">${subtotal.toLocaleString()} ₽</p>
+            </div>
+            <div class="header__item-qty">
+                <button onclick="decreaseQty(${index})">−</button>
+                <span>${quantity}</span>
+                <button onclick="increaseQty(${index})">+</button>
+            </div>
+            <button class="header__item-remove" onclick="removeFromCart(${index})">✕</button>
+        </div>
+      `
+      cartItemsContainer.appendChild(cartItem)
+    })
   }
 
+  headerItemsNum.textContent = totalCount
+  actionsCardBtn.textContent = totalCount
+  mathPrice.textContent = total.toLocaleString()
+}
+
+function addToCartById(productId) {
+  const productToAdd = allProducts.find((p) => p.id === productId)
+  if (!productToAdd) return
+  if (productToAdd.count === 0) {
+    alert('Извините, этот товар временно отсутствует.')
+    return
+  }
+  const existingCartItem = cart.find((item) => item.product.id === productId)
+  if (existingCartItem) {
+    if (existingCartItem.quantity < productToAdd.count) {
+      existingCartItem.quantity++
+    } else {
+      alert(
+        `Вы достигли максимального количества ${productToAdd.title} в наличии (${productToAdd.count}).`
+      )
+    }
+  } else {
+    cart.push({ product: productToAdd, quantity: 1 })
+  }
   updateCartUI()
 }
 
 function removeFromCart(index) {
-  cart.splice(index, 1)
-  updateCartUI()
+  if (index >= 0 && index < cart.length) {
+    cart.splice(index, 1)
+    updateCartUI()
+  }
+}
+
+function increaseQty(index) {
+  if (index >= 0 && index < cart.length) {
+    const item = cart[index]
+    if (item.quantity < item.product.count) {
+      item.quantity++
+      updateCartUI()
+    } else {
+      alert(
+        `Вы достигли максимального количества ${item.product.title} в наличии (${item.product.count}).`
+      )
+    }
+  }
+}
+
+function decreaseQty(index) {
+  if (index >= 0 && index < cart.length) {
+    if (cart[index].quantity > 1) {
+      cart[index].quantity--
+    } else {
+      cart.splice(index, 1)
+    }
+    updateCartUI()
+  }
 }
 
 function clearCart() {
@@ -224,19 +328,24 @@ function clearCart() {
   updateCartUI()
 }
 
-// Подключим к кнопке "очистить список"
-document.querySelector('.header__items-del').addEventListener('click', clearCart)
-
-function increaseQty(index) {
-  cart[index].quantity++
-  updateCartUI()
+if (clearCartBtn) {
+  clearCartBtn.addEventListener('click', clearCart)
 }
 
-function decreaseQty(index) {
-  if (cart[index].quantity > 1) {
-    cart[index].quantity--
-  } else {
-    cart.splice(index, 1)
-  }
-  updateCartUI()
+if (document.querySelector('.filter__body')) {
+  document.querySelector('.filter__body').addEventListener('change', (e) => {
+    if (e.target.classList.contains('filter-toggle__checkbox')) {
+      applyFiltersAndSort()
+    }
+  })
 }
+
+document.addEventListener('DOMContentLoaded', async () => {
+  allProducts = await fetchData()
+  renderCards(allProducts)
+  applyFiltersAndSort()
+  updateCartUI()
+  document.querySelectorAll('.filter-toggle__checkbox').forEach((cb) => {
+    cb.addEventListener('change', applyFiltersAndSort)
+  })
+})

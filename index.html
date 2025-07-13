@@ -264,9 +264,12 @@
 
               <div class="cards__date">
                 <div class="cards__date-head">
-                  <span class="cards__card-count"> 0 товаров </span>
-                  <button type="button" onclick="toggleFilter()">Фильтры</button>
-                  <button type="button" class="cards__date-sort">
+                  <span class="cards__card-count">0 товаров</span>
+                  <button type="button" onclick="toggleFilter()" class="card__date-filter">
+                    Фильтры
+                  </button>
+
+                  <div class="cards__date-sort" tabindex="0">
                     <span id="sort-by">Сначала дорогие</span>
                     <svg
                       width="8"
@@ -276,8 +279,15 @@
                       xmlns="http://www.w3.org/2000/svg">
                       <path d="M4 4.5L7.4641 0L0.535898 0L4 4.5Z" fill="#202020" />
                     </svg>
-                  </button>
+                    <span class="sort__body">
+                      <button type="button" class="sort__body-btn --active">Сначала дорогие</button>
+                      <button type="button" class="sort__body-btn">Сначала недорогие</button>
+                      <button type="button" class="sort__body-btn">Сначала популярные</button>
+                      <button type="button" class="sort__body-btn">Сначала новые</button>
+                    </span>
+                  </div>
                 </div>
+
                 <div class="cards__date-list"></div>
               </div>
             </div>
@@ -286,6 +296,6 @@
       </main>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script src="/js/main.js"></script>
+    <script src="/js/main.js" defer></script>
   </body>
 </html>

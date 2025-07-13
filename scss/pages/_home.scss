@@ -125,6 +125,7 @@
 
 .cards__date {
   width: 100%;
+  position: relative;
 }
 
 .cards__date-list {
@@ -136,11 +137,41 @@
 
 .cards__date-head {
   @include flex-between;
+  position: relative;
 }
 
 .cards__date-sort {
+  cursor: pointer;
   @include flex-inline;
+  position: relative;
   gap: 0.25rem;
+  user-select: none;
+
+  #sort-by {
+    font-weight: 600;
+  }
+
+  svg {
+    pointer-events: none;
+  }
+
+  .sort__body {
+    position: absolute;
+    top: 0%; 
+    right: 0;
+    margin-bottom: 0.5rem; 
+    display: none;
+    flex-direction: column;
+    background-color: $white-color;
+    width: 17.5rem;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 10000;
+
+    &.open {
+      display: flex;
+    }
+  }
 }
 
 .card__item {
@@ -165,6 +196,13 @@
   width: 278px;
   height: 278px;
   object-fit: cover;
+}
+
+.card__date-filter {
+  display: none;
+  @include respond(lg) {
+    display: block;
+  }
 }
 
 .card__title {
@@ -196,4 +234,27 @@
 .card__btn:disabled {
   background-color: #ccc;
   cursor: auto;
+}
+
+.sort__body-btn {
+  text-align: left;
+  padding: 1.0625rem 1.5rem;
+  white-space: nowrap;
+  width: 100%;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: $text-color;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: $primary-color;
+    color: $white-color;
+  }
+
+  &.--active {
+    background-color: $primary-color;
+    color: $white-color;
+  }
 }
