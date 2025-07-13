@@ -581,6 +581,12 @@ button {
   }
 }
 
+@media (max-width: 960px) {
+  .cards__card-count {
+    display: none;
+  }
+}
+
 .cards__date {
   width: 100%;
 }
@@ -661,9 +667,22 @@ button {
   cursor: auto;
 }
 
-.filter {
-  display: flex;
-  flex-direction: column;
+@media (max-width: 960px) {
+  .filter {
+    display: none;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.3019607843);
+    z-index: 5000;
+    transition: 0.2s;
+  }
+}
+
+.filter.active {
+  display: block;
 }
 
 .filter-toggle {
@@ -671,6 +690,34 @@ button {
   flex-wrap: wrap;
   flex-direction: column;
   gap: 1rem;
+}
+@media (max-width: 960px) {
+  .filter-toggle {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 3.375rem 1.5rem 7.125rem;
+    border-radius: 1.5rem 1.5rem 0 0;
+    background-color: #ffffff;
+  }
+}
+
+.filter__line {
+  display: none;
+}
+@media (max-width: 960px) {
+  .filter__line {
+    display: block;
+    height: 0.25rem;
+    width: 1.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(31, 32, 32, 0.6);
+    position: absolute;
+    border-radius: 2.5rem;
+    top: 0.75rem;
+  }
 }
 
 .filter-toggle__item {

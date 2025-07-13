@@ -1,14 +1,50 @@
 @use '../base/vars' as *;
-
+@use '../utils/mixins' as *;
 .filter {
-  display: flex;
-  flex-direction: column;
+  @include respond(lg) {
+    display: none;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    height: 100%;
+    width: 100%;
+    background-color: #0000004d;
+    z-index: 5000;
+    transition: 0.2s;
+  }
+}
+.filter.active {
+  display: block;
 }
 .filter-toggle {
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
   gap: 1rem;
+  @include respond(lg) {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 3.375rem 1.5rem 7.125rem;
+    border-radius: 1.5rem 1.5rem 0 0;
+    background-color: $white-color;
+  }
+}
+
+.filter__line {
+  display: none;
+  @include respond(lg) {
+    display: block;
+    height: 0.25rem;
+    width: 1.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #1f202099;
+    position: absolute;
+    border-radius: 2.5rem;
+    top: 0.75rem;
+  }
 }
 
 .filter-toggle__item {

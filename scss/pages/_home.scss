@@ -117,6 +117,12 @@
   }
 }
 
+.cards__card-count {
+  @include respond(lg) {
+    display: none;
+  }
+}
+
 .cards__date {
   width: 100%;
 }

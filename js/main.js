@@ -26,6 +26,11 @@ const swiper = new Swiper('.mySwiper', {
   },
 })
 
+const toggleFilter = () => {
+  const filter = document.querySelector('.filter');
+  filter.classList.toggle('active')
+}
+
 const checkboxes = document.querySelectorAll('.filter-toggle__checkbox')
 
 checkboxes.forEach((checkbox) => {

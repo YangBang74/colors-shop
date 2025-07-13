@@ -23,8 +23,8 @@
     "sass": "^1.89.2"
   },
   "scripts": {
-    "scss": "sass ./css/main.scss ./css/styles.css",
-    "watch": "sass --watch ./css/main.scss:./css/styles.css"
+    "scss": "sass ./scss/main.scss ./css/styles.css",
+    "watch": "sass --watch ./scss/main.scss:./css/styles.css"
   },
   "keywords": [],
   "author": "",

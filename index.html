@@ -213,48 +213,59 @@
         <div class="cards">
           <div class="container">
             <div class="cards__body">
-              <aside class="filter-toggle">
-                <label class="filter-toggle__item">
-                  <input type="checkbox" class="filter-toggle__checkbox" data-filter="new" />
-                  <span class="filter-toggle__switch">
-                    <span class="filter-toggle__thumb"></span>
-                  </span>
-                  <span class="filter-toggle__label">Новинки</span>
-                </label>
-                <label class="filter-toggle__item">
-                  <input type="checkbox" class="filter-toggle__checkbox" data-filter="available" />
-                  <span class="filter-toggle__switch">
-                    <span class="filter-toggle__thumb"></span>
-                  </span>
-                  <span class="filter-toggle__label">В наличии</span>
-                </label>
-                <label class="filter-toggle__item">
-                  <input type="checkbox" class="filter-toggle__checkbox" data-filter="contract" />
-                  <span class="filter-toggle__switch">
-                    <span class="filter-toggle__thumb"></span>
-                  </span>
-                  <span class="filter-toggle__label">Контрактные</span>
-                </label>
+              <div class="filter">
+                <aside class="filter-toggle">
+                  <button type="button" class="filter__line" onclick="toggleFilter()"></button>
+                  <label class="filter-toggle__item">
+                    <input type="checkbox" class="filter-toggle__checkbox" data-filter="new" />
+                    <span class="filter-toggle__switch">
+                      <span class="filter-toggle__thumb"></span>
+                    </span>
+                    <span class="filter-toggle__label">Новинки</span>
+                  </label>
+                  <label class="filter-toggle__item">
+                    <input
+                      type="checkbox"
+                      class="filter-toggle__checkbox"
+                      data-filter="available" />
+                    <span class="filter-toggle__switch">
+                      <span class="filter-toggle__thumb"></span>
+                    </span>
+                    <span class="filter-toggle__label">В наличии</span>
+                  </label>
+                  <label class="filter-toggle__item">
+                    <input type="checkbox" class="filter-toggle__checkbox" data-filter="contract" />
+                    <span class="filter-toggle__switch">
+                      <span class="filter-toggle__thumb"></span>
+                    </span>
+                    <span class="filter-toggle__label">Контрактные</span>
+                  </label>
 
-                <label class="filter-toggle__item">
-                  <input type="checkbox" class="filter-toggle__checkbox" data-filter="exclusive" />
-                  <span class="filter-toggle__switch">
-                    <span class="filter-toggle__thumb"></span>
-                  </span>
-                  <span class="filter-toggle__label">Эксклюзивные</span>
-                </label>
+                  <label class="filter-toggle__item">
+                    <input
+                      type="checkbox"
+                      class="filter-toggle__checkbox"
+                      data-filter="exclusive" />
+                    <span class="filter-toggle__switch">
+                      <span class="filter-toggle__thumb"></span>
+                    </span>
+                    <span class="filter-toggle__label">Эксклюзивные</span>
+                  </label>
 
-                <label class="filter-toggle__item">
-                  <input type="checkbox" class="filter-toggle__checkbox" data-filter="sale" />
-                  <span class="filter-toggle__switch">
-                    <span class="filter-toggle__thumb"></span>
-                  </span>
-                  <span class="filter-toggle__label">Распродажа</span>
-                </label>
-              </aside>
+                  <label class="filter-toggle__item">
+                    <input type="checkbox" class="filter-toggle__checkbox" data-filter="sale" />
+                    <span class="filter-toggle__switch">
+                      <span class="filter-toggle__thumb"></span>
+                    </span>
+                    <span class="filter-toggle__label">Распродажа</span>
+                  </label>
+                </aside>
+              </div>
+
               <div class="cards__date">
                 <div class="cards__date-head">
-                  <span> 0 товаров </span>
+                  <span class="cards__card-count"> 0 товаров </span>
+                  <button type="button" onclick="toggleFilter()">Фильтры</button>
                   <button type="button" class="cards__date-sort">
                     <span id="sort-by">Сначала дорогие</span>
                     <svg
