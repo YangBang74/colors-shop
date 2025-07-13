@@ -469,6 +469,7 @@ button {
   gap: 0.5rem;
   color: #ffffff;
   opacity: 30%;
+  z-index: 200;
 }
 @media (max-width: 960px) {
   .hero__menu {
