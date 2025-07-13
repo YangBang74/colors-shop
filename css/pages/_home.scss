@@ -1,0 +1,193 @@
+@use '../base/vars' as *;
+@use '../utils/mixins' as *;
+
+.hero {
+  position: relative;
+}
+
+.hero__menu {
+  position: absolute;
+  @include flex-inline;
+  top: 2rem;
+  gap: 0.5rem;
+  color: $white-color;
+  opacity: 30%;
+  @include respond(lg) {
+    position: relative;
+    color: $text-color;
+  }
+  &-link {
+    text-transform: uppercase;
+    font-size: 0.625rem;
+  }
+  &-circle {
+    display: block;
+    width: 0.1875rem;
+    height: 0.1875rem;
+    background-color: #c4c4c4;
+  }
+}
+
+.hero__block {
+  padding: 13.5625rem 0 13.375rem;
+  max-width: 29.5rem;
+  margin: 0 auto;
+  color: $white-color;
+  text-align: center;
+  @include space-y(1.5rem);
+  &-title {
+    font-size: 4.5rem;
+    line-height: 88%;
+  }
+  &-text {
+    font-weight: 500;
+  }
+}
+
+.slider {
+  background: url('/images/hero-bg.png') no-repeat center / cover;
+  @include respond(lg) {
+    display: none;
+  }
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: #fff;
+  }
+
+  .swiper-pagination-bullet {
+    width: 6px;
+    height: 6px;
+    background-color: $white-color;
+    opacity: 0.2;
+  }
+  .swiper-pagination-bullet-active {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+.toggle {
+  position: relative;
+  display: inline-block;
+}
+
+.toggle__input {
+  display: none;
+}
+
+.toggle__label {
+  display: block;
+  width: 60px;
+  height: 30px;
+  background-color: var(--toggle-light);
+  border-radius: 99px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.dark-mode .toggle__label {
+  background-color: var(--toggle-dark);
+}
+
+.toggle__input:checked + .toggle__label::after {
+  left: 32px;
+}
+
+.toggle__label::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 26px;
+  height: 26px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  transition: left 0.3s ease;
+}
+
+.cards {
+  margin: 4.5rem 0;
+  &__body {
+    display: flex;
+    flex-direction: row;
+    gap: 5rem;
+    @include respond(lg) {
+      flex-direction: column;
+    }
+  }
+}
+
+.cards__date {
+  width: 100%;
+}
+
+.cards__date-list {
+  margin-top: 2.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.cards__date-head {
+  @include flex-between;
+}
+
+.cards__date-sort {
+  @include flex-inline;
+  gap: 0.25rem;
+}
+
+.card__item {
+  background: #fff;
+  padding: 0 6px 14px;
+  border-bottom: 1px solid #00000019;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  div {
+    @include flex-between;
+  }
+}
+
+.card__item:hover {
+  .card__btn {
+    opacity: 1;
+  }
+}
+
+.card__image {
+  width: 278px;
+  height: 278px;
+  object-fit: cover;
+}
+
+.card__title {
+  font-size: 16px;
+  margin: 0;
+  font-weight: 300;
+  letter-spacing: 2%;
+}
+
+.card__price {
+  color: #555;
+}
+
+.card__btn {
+  opacity: 0;
+  background-color: $primary-color;
+  color: $text-color;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  white-space: nowrap;
+  @include flex-center;
+  transition: 0.3s;
+  height: 2rem;
+  width: 5rem;
+}
+
+.card__btn:disabled {
+  background-color: #ccc;
+  cursor: auto;
+}

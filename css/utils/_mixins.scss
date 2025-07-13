@@ -1,0 +1,70 @@
+// Центровка по флексам
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-inline {
+  display: flex;
+  align-items: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// Обрезка текста
+@mixin text-ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+// Адаптивный шрифт
+@mixin responsive-font($min, $max) {
+  font-size: clamp(#{$min}ren, 2vw, #{$max}rem);
+}
+
+// Простой fade
+@mixin fade($duration: 0.3s) {
+  transition: opacity $duration ease;
+  opacity: 0;
+
+  &.is-visible {
+    opacity: 1;
+  }
+}
+
+@mixin space-y($size) {
+  > * + * {
+    margin-top: $size;
+  }
+}
+
+// Медиа-запрос
+@mixin respond($bp) {
+  @if $bp == sm {
+    @media (max-width: 480px) {
+      @content;
+    }
+  } @else if $bp == s {
+    @media (max-width: 360px) {
+      @content;
+    }
+  } @else if $bp == md {
+    @media (max-width: 640px) {
+      @content;
+    }
+  } @else if $bp == lg {
+    @media (max-width: 960px) {
+      @content;
+    }
+  } @else if $bp == xl {
+    @media (max-width: 1280px) {
+      @content;
+    }
+  }
+}

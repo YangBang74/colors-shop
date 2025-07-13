@@ -1,0 +1,256 @@
+@use '../base/vars' as *;
+@use '../utils/mixins' as *;
+
+.header {
+  position: relative;
+  &__body {
+    @include flex-between;
+    gap: 0.9375rem;
+    border-bottom: 1px solid #1f20200f;
+  }
+}
+
+.header__burger {
+  @include flex-between;
+  flex-direction: column;
+  width: 1.5rem;
+  height: 0.875rem;
+  display: none;
+  @include respond(lg) {
+    display: flex;
+  }
+  &-line {
+    display: block;
+    height: 0.125rem;
+    width: 100%;
+    background-color: $text-color;
+  }
+}
+
+.header__body-logo {
+  padding: 2.5438rem 0;
+  width: clamp(6.1875rem, 100%, 8.1875rem);
+  @include respond(lg) {
+    padding: 1.3125rem 0;
+  }
+}
+
+.header__menu {
+  @include flex-inline;
+  gap: 1.5rem;
+  width: 50%;
+  @include respond(lg) {
+    position: absolute;
+    background-color: $background-color;
+    z-index: 50;
+    top: 80px;
+    left: -100%;
+    width: 100%;
+    height: 100vh;
+    padding: 20px 0;
+    flex-direction: column;
+    justify-content: start;
+    transition: 0.2s;
+  }
+  &-link {
+    padding: 2.8125rem 0;
+    font-size: 0.875rem;
+    letter-spacing: 6%;
+    @include respond(lg) {
+      padding: 0.75rem 0;
+      font-size: 1.25rem;
+    }
+  }
+}
+
+.header__menu.active {
+  left: 0;
+}
+
+.header__contact {
+  display: flex;
+  flex-direction: column;
+  padding: 2.25rem 0;
+  @include respond(lg) {
+    display: none;
+  }
+  &-title {
+    white-space: nowrap;
+    font-weight: 500;
+  }
+  &-sub {
+    font-size: 0.875rem;
+    opacity: 30%;
+  }
+}
+
+.header__actions {
+  @include flex-inline;
+  gap: 1.5rem;
+  &-item {
+    width: 1.5rem;
+    height: 1.5rem;
+    @include respond(lg) {
+      display: none;
+    }
+  }
+  .--actions-card {
+    @include flex-center;
+    background-color: $primary-color;
+    border-radius: $border-radius-full;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+}
+
+.card {
+  z-index: 5000;
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #00000073;
+}
+.header__card {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: clamp(40%, 80vw, 37.5rem);
+  background-color: $white-color;
+  padding: 2.5rem;
+  @include respond(md) {
+    width: 100%;
+    padding: 1.25rem;
+  }
+  &-title {
+    @include flex-between;
+    h2 {
+      font-size: 1.875rem;
+      font-weight: 500;
+      line-height: 88%;
+      letter-spacing: -4%;
+    }
+    button {
+      @include flex-center;
+      border: 1px solid #0000001a;
+      padding: 1.125rem;
+      border-radius: $border-radius-full;
+    }
+  }
+  &-items {
+    margin-top: 5.875rem;
+  }
+}
+
+.card.active {
+  display: block;
+}
+
+.header__items-head {
+  @include flex-between;
+  font-size: 0.875rem;
+  button {
+    font-weight: 300;
+    opacity: 40%;
+  }
+  button:hover {
+    opacity: 100%;
+  }
+}
+
+.header__bottom {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 2.5rem;
+  width: 89%;
+  right: 2.5rem;
+  @include flex-between;
+  @include respond(md) {
+    left: 1.25rem;
+  }
+  &-price {
+    display: flex;
+    flex-direction: column;
+    white-space: nowrap;
+    strong {
+      font-size: 1.875rem;
+      font-weight: 500;
+    }
+  }
+  &-btn {
+    background-color: $primary-color;
+    padding: 1.25rem 3.625rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    @include respond(md) {
+      padding: 0.625rem 1.25rem;
+    }
+  }
+}
+
+.header__item {
+  padding: 0.75rem 0;
+  @include flex-inline;
+  gap: 0.5rem;
+  border-top: 1px solid #00000019;
+  margin: 10px 0;
+  img {
+    width: 6rem;
+    height: 6rem;
+    object-fit: cover;
+    @include respond(md) {
+      width: 4rem;
+      height: 4rem;
+    }
+  }
+  &-info {
+    @include flex-between;
+    width: 100%;
+    > div {
+      max-width: 10.25rem;
+      @include space-y(1rem);
+    }
+  }
+  &-title {
+    font-weight: 300;
+    letter-spacing: 2%;
+    line-height: 112%;
+  }
+  &-price {
+    font-weight: 600;
+  }
+  &-qty {
+    @include flex-inline;
+    gap: 1.3125rem;
+    @include respond(md) {
+      flex-direction: column;
+      gap: 0.3125rem;
+    }
+    button {
+      width: 2.5rem;
+      height: 1.5rem;
+      @include flex-center;
+      margin: 0;
+      background-color: #f2f2f2;
+      border-radius: 0.25rem;
+    }
+    span {
+      margin: 0;
+    }
+  }
+  &-remove {
+    opacity: 20%;
+  }
+  &-remove:hover {
+    opacity: 100%;
+    svg {
+      width: 0.75rem;
+      height: 0.75rem;
+    }
+  }
+}

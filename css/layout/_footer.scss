@@ -1,0 +1,59 @@
+@use '../base/vars' as *;
+@use '../utils/mixins' as *;
+
+.footer {
+  padding: 2rem 0;
+}
+.footer__body {
+  @include flex-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  @include respond(md) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.footer__logo {
+  order: 2; // ← добавь это, чтобы в desktop был вторым
+  @include respond(md) {
+    order: 0; // mobile: первым
+    width: 100%;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+}
+
+.footer__menu {
+  order: 0; // desktop
+  width: 60%;
+  @include flex-inline;
+  align-items: flex-start;
+  gap: 2rem;
+
+  &-list {
+    @include space-y(1rem);
+  }
+
+  @include respond(md) {
+    order: 1; // mobile: после логотипа
+    width: 100%;
+    justify-content: left;
+    flex-wrap: wrap;
+    border-bottom: 2px solid $text-color;
+    padding-bottom: 2rem;
+  }
+}
+
+.footer__copyright {
+  order: 2;
+  text-align: left;
+
+  @include respond(md) {
+    order: 2; // последним в любом случае
+    width: 100%;
+    text-align: left;
+    margin-top: 1rem;
+  }
+}

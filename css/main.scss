@@ -1,0 +1,21 @@
+@use './base/typography';
+@use './base/vars' as *;
+@use './base/reset';
+
+@use './layout/header';
+@use './layout/footer';
+@use './utils/mixins' as *;
+@use './pages/home';
+@use './components/filter';
+body {
+  font-family: $primary-font;
+  color: $text-color;
+}
+
+.container {
+  max-width: clamp(20rem, 95vw, 111.8312rem);
+  margin-inline: auto;
+  @include respond(lg) {
+    padding: 0 1.5rem;
+  }
+}
